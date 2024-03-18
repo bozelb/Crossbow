@@ -7,6 +7,7 @@
 #include "InputMappingContext.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Crossbow/Crossbow.h"
 
 ACrossbowController::ACrossbowController()
 {
