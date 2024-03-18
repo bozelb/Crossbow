@@ -11,6 +11,7 @@
 ACrossbowController::ACrossbowController()
 {
 	bReplicates = true;	
+	DashDistance = 350.f;
 }
 
 void ACrossbowController::BeginPlay()
@@ -33,6 +34,10 @@ void ACrossbowController::SetupInputComponent()
 	// Setting bindings,
 	// Move,
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACrossbowController::Move);
+	// Dash,
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACrossbowController::Dash);
+	// Mouse input,
+	EnhancedInputComponent->BindAction(LookAtAction, ETriggerEvent::Triggered, this, &ACrossbowController::LookAt);
 	// Jumping,Jumping values are set in BP,
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACrossbowController::Jump);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACrossbowController::StopJumping);
@@ -40,19 +45,28 @@ void ACrossbowController::SetupInputComponent()
 
 void ACrossbowController::Move(const FInputActionValue& InputActionValue)
 {
+
 	// Getting the input from the player and storing it into a FVector,
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
-	// Getting rotation of player,
-	const FRotator Rotation = GetControlRotation();
-	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
-
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
-		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
-		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+		// Adding input to the controlled pawn,
+		ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), InputAxisVector.Y);
+		ControlledPawn->AddMovementInput(ControlledPawn->GetActorRightVector(), InputAxisVector.X);
+	}
+
+}
+
+void ACrossbowController::Dash(const FInputActionValue& InputActionValue)
+{
+	// Getting the input from the player and storing it into a FVector,
+	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+
+	if (APawn* ControlledPawn = GetPawn<APawn>())
+	{
+		// Adding dash distance to forward facing vector,
+		ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), DashDistance);
 	}
 
 }
@@ -65,5 +79,17 @@ void ACrossbowController::Jump()
 void ACrossbowController::StopJumping()
 {
 	GetCharacter()->StopJumping();
+}
+
+void ACrossbowController::LookAt(const FInputActionValue& InputActionValue)
+{
+	// Getting input values and storing them,
+	 FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+	if (APawn* ControlledPawn = GetPawn<APawn>())
+	{
+		// Adding values to the controller,
+		ControlledPawn->AddControllerYawInput(InputAxisVector.X);
+		ControlledPawn->AddControllerPitchInput(InputAxisVector.Y);		
+	}
 }
 

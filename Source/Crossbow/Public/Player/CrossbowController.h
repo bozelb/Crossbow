@@ -24,8 +24,10 @@ protected:
 	
 private: // Functions.
 	void Move(const struct FInputActionValue& InputActionValue);
+	void Dash(const struct FInputActionValue& InputActionValue);
 	void Jump();
 	void StopJumping();
+	void LookAt(const struct FInputActionValue& InputActionValue);
 private: // Vars,
 	UPROPERTY(EditAnywhere, Category = "Input")
 		TObjectPtr<UInputMappingContext> BaseControlsContext;
@@ -35,4 +37,13 @@ private: // Vars,
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 		TObjectPtr<UInputAction> JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+		TObjectPtr<UInputAction> LookAtAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+		TObjectPtr<UInputAction> DashAction;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+		float DashDistance;
 };
