@@ -8,11 +8,12 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Crossbow/Crossbow.h"
+#include "Kismet/GameplayStatics.h"
 
 ACrossbowController::ACrossbowController()
 {
 	bReplicates = true;	
-	DashDistance = 350.f;
+	DashDistance = 5000.f;
 }
 
 void ACrossbowController::BeginPlay()
@@ -63,11 +64,16 @@ void ACrossbowController::Dash(const FInputActionValue& InputActionValue)
 {
 	// Getting the input from the player and storing it into a FVector,
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
-
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
+		// Getting 	
+		UMovementComponent* MovementComp = GetCharacter()->GetCharacterMovement();
 		// Adding dash distance to forward facing vector,
-		ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), DashDistance);
+		//ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), DashDistance);	
+		//ControlledPawn->AddMovementInput(MovementComp->Velocity, DashDistance);
+		FVector LaunchVector = MovementComp->Velocity;
+		LaunchVector *= 5.f;
+		GetCharacter()->LaunchCharacter(LaunchVector, false, false);
 	}
 
 }
