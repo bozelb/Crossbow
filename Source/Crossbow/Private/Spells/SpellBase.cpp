@@ -1,7 +1,7 @@
 // FPS_Crossbow
 
 
-#include "SpellBase.h"
+#include "Spells/SpellBase.h"
 
 ASpellBase::ASpellBase()
 {

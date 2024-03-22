@@ -9,11 +9,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Crossbow/Crossbow.h"
 #include "Kismet/GameplayStatics.h"
+#include "Character/PlayerCharacter.h"
 
 ACrossbowController::ACrossbowController()
 {
+	// Settig var values,
 	bReplicates = true;	
-	DashDistance = 5000.f;
+	DashValue = 10.f;
+	bCanDash = true;
+	
 }
 
 void ACrossbowController::BeginPlay()
@@ -26,6 +30,11 @@ void ACrossbowController::BeginPlay()
 	// Adding mapping context to subsystem,
 	check(Subsystem);
 	Subsystem->AddMappingContext(BaseControlsContext, 0);
+	//float value = GetCharacter()->GetCharacterMovement()->FallingLateralFriction;
+	// Getting ref to playerCharacter.
+	 PlayerCharacter = Cast<APlayerCharacter>(GetCharacter());
+	//FString Message{ "%f", value };
+	//WRITE_MESSAGE_TO_SCREEN(Messeage);
 }
 
 void ACrossbowController::SetupInputComponent()
@@ -37,12 +46,15 @@ void ACrossbowController::SetupInputComponent()
 	// Move,
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACrossbowController::Move);
 	// Dash,
-	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Triggered, this, &ACrossbowController::Dash);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Started, this, &ACrossbowController::Dash);
+	EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &ACrossbowController::DashOver);
 	// Mouse input,
 	EnhancedInputComponent->BindAction(LookAtAction, ETriggerEvent::Triggered, this, &ACrossbowController::LookAt);
 	// Jumping,Jumping values are set in BP,
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACrossbowController::Jump);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACrossbowController::StopJumping);
+	// Weapon / Spell casting,
+	EnhancedInputComponent->BindAction(FireWeaponAction, ETriggerEvent::Triggered, this, &ACrossbowController::FireWeapon);
 }
 
 void ACrossbowController::Move(const FInputActionValue& InputActionValue)
@@ -62,20 +74,34 @@ void ACrossbowController::Move(const FInputActionValue& InputActionValue)
 
 void ACrossbowController::Dash(const FInputActionValue& InputActionValue)
 {
-	// Getting the input from the player and storing it into a FVector,
-	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+	if (!bCanDash) return;
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
-		// Getting 	
-		UMovementComponent* MovementComp = GetCharacter()->GetCharacterMovement();
-		// Adding dash distance to forward facing vector,
-		//ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), DashDistance);	
-		//ControlledPawn->AddMovementInput(MovementComp->Velocity, DashDistance);
-		FVector LaunchVector = MovementComp->Velocity;
-		LaunchVector *= 5.f;
-		GetCharacter()->LaunchCharacter(LaunchVector, false, false);
-	}
+		// Getting Char movement comp,
+		UCharacterMovementComponent* CharMovementComp = GetCharacter()->GetCharacterMovement();
+		// Getting current velocity,
+		FVector LaunchVector{ CharMovementComp->Velocity.X, CharMovementComp->Velocity.Y, 0.f };
+		//WRITE_MESSAGE_TO_SCREEN("Velocity : " + MovementComp->Velocity.ToString());
+		// Multiplying current velocity by dash scaler values,
+		LaunchVector *= DashValue;
 
+
+		//FVector ForwardFacingVector = ControlledPawn->GetActorForwardVector();
+		CharMovementComp->FallingLateralFriction = 50.f;
+		// Adding it to char movement via launchChar method,
+		GetCharacter()->LaunchCharacter(LaunchVector, true, true);
+		
+		//WRITE_MESSAGE_TO_SCREEN("Friction :" + friction);
+		bCanDash = false;
+	}
+}
+
+void ACrossbowController::DashOver()
+{
+	// Getting Char movement comp,
+	UCharacterMovementComponent* CharMovementComp = GetCharacter()->GetCharacterMovement();
+	CharMovementComp->FallingLateralFriction = 0.f;
+	bCanDash = true;
 }
 
 void ACrossbowController::Jump()
@@ -97,6 +123,14 @@ void ACrossbowController::LookAt(const FInputActionValue& InputActionValue)
 		// Adding values to the controller,
 		ControlledPawn->AddControllerYawInput(InputAxisVector.X);
 		ControlledPawn->AddControllerPitchInput(InputAxisVector.Y);		
+	}
+}
+
+void ACrossbowController::FireWeapon()
+{
+	if (PlayerCharacter != nullptr)
+	{
+		PlayerCharacter->FireWeapon();
 	}
 }
 

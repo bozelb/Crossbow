@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 class UCameraComponent;
+class AWeaponBase;
 /**
  * 
  */
@@ -18,13 +19,21 @@ class CROSSBOW_API APlayerCharacter : public ABaseCharacter
 public:
 
 	APlayerCharacter();
+	void FireWeapon();
 
 protected:
 
 	virtual void BeginPlay() override;
+	void SpawnDefaultWeapon();
 
-private:
+private: // Vars,
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 		TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<AWeaponBase> CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<AWeaponBase> DefaultWeapon;
 };

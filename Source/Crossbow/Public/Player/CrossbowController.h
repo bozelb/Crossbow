@@ -9,6 +9,7 @@
 // Forward declarations,
 class UInputMappingContext;
 class UInputAction;
+class APlayerCharacter;
 /**
  * 
  */
@@ -16,6 +17,7 @@ UCLASS()
 class CROSSBOW_API ACrossbowController : public APlayerController
 {
 	GENERATED_BODY()
+
 public:
 	ACrossbowController();
 protected:
@@ -25,9 +27,12 @@ protected:
 private: // Functions.
 	void Move(const struct FInputActionValue& InputActionValue);
 	void Dash(const struct FInputActionValue& InputActionValue);
+	void DashOver();
 	void Jump();
 	void StopJumping();
 	void LookAt(const struct FInputActionValue& InputActionValue);
+	void FireWeapon();
+
 private: // Vars,
 	UPROPERTY(EditAnywhere, Category = "Input")
 		TObjectPtr<UInputMappingContext> BaseControlsContext;
@@ -44,6 +49,15 @@ private: // Vars,
 	UPROPERTY(EditAnywhere, Category = "Input")
 		TObjectPtr<UInputAction> DashAction;
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-		float DashDistance;
+	UPROPERTY(EditAnywhere, Category = "Input")
+		TObjectPtr<UInputAction> FireWeaponAction;
+
+	// Dash properties,
+	UPROPERTY(EditAnywhere, Category = "Movement Values")
+		float DashValue;
+
+	bool bCanDash;
+
+	// Reference to player character,
+	TObjectPtr<APlayerCharacter> PlayerCharacter;
 };

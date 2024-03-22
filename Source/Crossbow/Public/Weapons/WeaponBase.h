@@ -7,12 +7,12 @@
 #include "WeaponBase.generated.h"
 
 
-UCLASS(Abstract)
+UCLASS()
 class CROSSBOW_API AWeaponBase : public AActor
 {
 	GENERATED_BODY()
+
 public:
 	AWeaponBase();
-protected:
-	virtual void Fire();
+	virtual void Fire();	
 };
