@@ -53,8 +53,12 @@ void ACrossbowController::SetupInputComponent()
 	// Jumping,Jumping values are set in BP,
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACrossbowController::Jump);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACrossbowController::StopJumping);
+	// Aimming,
+	EnhancedInputComponent->BindAction(AimWeaponAction, ETriggerEvent::Started, this, &ACrossbowController::StartedAimming);
+	EnhancedInputComponent->BindAction(AimWeaponAction, ETriggerEvent::Completed, this, &ACrossbowController::StoppedAimming);
 	// Weapon / Spell casting,
 	EnhancedInputComponent->BindAction(FireWeaponAction, ETriggerEvent::Triggered, this, &ACrossbowController::FireWeapon);
+	EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ACrossbowController::ReloadWeapon);
 }
 
 void ACrossbowController::Move(const FInputActionValue& InputActionValue)
@@ -133,4 +137,30 @@ void ACrossbowController::FireWeapon()
 		PlayerCharacter->FireWeapon();
 	}
 }
+
+void ACrossbowController::ReloadWeapon()
+{
+	if (PlayerCharacter != nullptr)
+	{
+		PlayerCharacter->ReloadWeapon();
+	}
+}
+
+void ACrossbowController::StartedAimming()
+{
+	if (PlayerCharacter != nullptr)
+	{
+		PlayerCharacter->Aimming(true);
+	}
+}
+
+void ACrossbowController::StoppedAimming()
+{
+	if (PlayerCharacter != nullptr)
+	{
+		PlayerCharacter->Aimming(false);
+	}
+}
+
+
 

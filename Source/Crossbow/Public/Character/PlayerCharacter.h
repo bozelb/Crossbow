@@ -20,11 +20,13 @@ public:
 
 	APlayerCharacter();
 	void FireWeapon();
+	void ReloadWeapon();
+	void Aimming(bool bIsAimming);
 
 protected:
 
 	virtual void BeginPlay() override;
-	void SpawnDefaultWeapon();
+	void SpawnDefaultWeapon();	
 
 private: // Vars,
 

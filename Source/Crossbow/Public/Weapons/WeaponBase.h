@@ -15,4 +15,5 @@ class CROSSBOW_API AWeaponBase : public AActor
 public:
 	AWeaponBase();
 	virtual void Fire();	
+	void ReloadWeapon();
 };

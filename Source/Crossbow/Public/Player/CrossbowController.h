@@ -32,6 +32,10 @@ private: // Functions.
 	void StopJumping();
 	void LookAt(const struct FInputActionValue& InputActionValue);
 	void FireWeapon();
+	void ReloadWeapon();
+	// Aiming,
+	void StartedAimming();
+	void StoppedAimming();
 
 private: // Vars,
 	UPROPERTY(EditAnywhere, Category = "Input")
@@ -51,6 +55,12 @@ private: // Vars,
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 		TObjectPtr<UInputAction> FireWeaponAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+		TObjectPtr<UInputAction> AimWeaponAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+		TObjectPtr<UInputAction> ReloadAction;
 
 	// Dash properties,
 	UPROPERTY(EditAnywhere, Category = "Movement Values")

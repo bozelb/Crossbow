@@ -13,3 +13,8 @@ void AWeaponBase::Fire()
 {
 	WRITE_MESSAGE_TO_SCREEN("Weapon Fired");
 }
+
+void AWeaponBase::ReloadWeapon()
+{
+	WRITE_MESSAGE_TO_SCREEN("Reloaded Weapon");
+}
