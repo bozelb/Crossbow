@@ -38,4 +38,7 @@ private: // Vars,
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 		TSubclassOf<AWeaponBase> DefaultWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<USceneComponent> TempWeaponAttachment;
 };

@@ -10,7 +10,9 @@ APlayerCharacter::APlayerCharacter()
 {
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(RootComponent);
-		
+	
+	TempWeaponAttachment = CreateDefaultSubobject<USceneComponent>(TEXT("Attachment"));
+	TempWeaponAttachment->SetupAttachment(Camera);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -23,7 +25,7 @@ void APlayerCharacter::SpawnDefaultWeapon()
 {
 	if (!DefaultWeapon) return;
 	AWeaponBase* SpawnedWeapon = GetWorld()->SpawnActor<AWeaponBase>(DefaultWeapon);
-	SpawnedWeapon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	SpawnedWeapon->AttachToComponent(TempWeaponAttachment, FAttachmentTransformRules::KeepRelativeTransform);
 	CurrentWeapon = SpawnedWeapon;
 }
 
